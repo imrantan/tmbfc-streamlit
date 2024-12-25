@@ -1,6 +1,9 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import matplotlib.pyplot as plt
+from mplsoccer.pitch import Pitch
+import seaborn as sns
 from dummydata import generate_dummy_passes, generate_heatmap
 
 # Set page configuration
@@ -38,7 +41,7 @@ def main():
         with col1:
             st.title("TMB FC")
         with col2:
-            st.image("images/tmb_logo.png", width=125)
+            st.image("images/tmb_logo.png", width=140)
 
         with st.expander("Team Lineup", expanded=True, icon="⚽"):
             # create a dictionary for buttons
@@ -140,8 +143,50 @@ def generate_player_stats(selected_player):
 
     st.markdown('***')
 
-    heatmap = generate_heatmap(passes_data, selected_player)
-    st.pyplot(heatmap)
+    ### Heatmap of Passes ###
+
+    player_passes = passes_data[passes_data['player']==selected_player]
+    fig ,ax = plt.subplots(figsize=(13.5,8))
+    fig.set_facecolor('#22312b')
+    ax.patch.set_facecolor('#22312b')
+
+    #this is how we create the pitch
+    pitch = Pitch(pitch_type='statsbomb', 
+                pitch_color='#22312b', 
+                line_color='#c7d5cc',
+                )
+
+    #Draw the pitch on the ax figure as well as invert the axis for this specific pitch
+    pitch.draw(ax=ax)
+    plt.gca().invert_yaxis()
+
+    #Create the heatmap
+    kde = sns.kdeplot(
+            x=player_passes['x'],
+            y=player_passes['y'],
+            fill = True,
+            shade_lowest=False,
+            alpha=.5,
+            n_levels=10,
+            cmap = 'magma', ax=ax
+    )
+
+    #use a for loop to plot each pass
+    # for x in range(len(df['x'])):
+    #     if df['outcome'][x] == 'Successful':
+    #         plt.plot((df['x'][x],df['endX'][x]),(df['y'][x],df['endY'][x]),color='green')
+    #         plt.scatter(df['x'][x],df['y'][x],color='green')
+    #     if df['outcome'][x] == 'Unsuccessful':
+    #         plt.plot((df['x'][x],df['endX'][x]),(df['y'][x],df['endY'][x]),color='red')
+    #         plt.scatter(df['x'][x],df['y'][x],color='red')
+            
+    plt.xlim(0,120)
+    plt.ylim(0,80)
+
+    plt.title(f"{selected_player}'s Heat Map From Recent Games",color='white',size=20)
+
+    # heatmap = generate_heatmap(passes_data, selected_player)
+    st.pyplot(fig)
 
 
 def club_overview_page():

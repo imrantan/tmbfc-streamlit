@@ -105,7 +105,7 @@ def generate_heatmap(df_input, player_name):
             shade_lowest=False,
             alpha=.5,
             n_levels=10,
-            cmap = 'magma'
+            cmap = 'magma', ax=ax
     )
 
     #use a for loop to plot each pass
