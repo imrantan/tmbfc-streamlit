@@ -245,7 +245,5 @@ def club_overview_page():
     st.plotly_chart(fig)
 
 
-
-
 if __name__ == "__main__":
     main()
