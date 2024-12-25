@@ -1,0 +1,37 @@
+body.football-theme {
+    background: url('https://example.com/football-field.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #f8f9fa;
+    font-family: 'Press Start 2P', cursive;
+}
+
+h1, h3 {
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+ul.list-group li {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid #28a745;
+    margin-bottom: 5px;
+}
+
+ul.list-group li a {
+    color: #28a745;
+    text-decoration: none;
+}
+
+ul.list-group li a:hover {
+    color: #f8f9fa;
+    text-decoration: underline;
+}
+
+.btn {
+    background-color: #28a745;
+    color: #fff;
+    border-radius: 20px;
+}
+
+.btn:hover {
+    background-color: #218838;
+}
