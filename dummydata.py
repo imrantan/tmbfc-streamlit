@@ -1,8 +1,8 @@
 import pandas as pd
 import random
-import matplotlib.pyplot as plt
-from mplsoccer.pitch import Pitch
-import seaborn as sns
+# import matplotlib.pyplot as plt
+# from mplsoccer.pitch import Pitch
+# import seaborn as sns
 
 # Read in the data. Use this real data as a baseline to create dummy data.
 df = pd.read_csv('data/messibetis.csv')
@@ -81,46 +81,46 @@ def generate_dummy_passes():
     return all_players_passes
 
 
-def generate_heatmap(df_input, player_name):
-    df = df_input[df_input['player']==player_name]
-    fig ,ax = plt.subplots(figsize=(13.5,8))
-    fig.set_facecolor('#22312b')
-    ax.patch.set_facecolor('#22312b')
+# def generate_heatmap(df_input, player_name):
+#     df = df_input[df_input['player']==player_name]
+#     fig ,ax = plt.subplots(figsize=(13.5,8))
+#     fig.set_facecolor('#22312b')
+#     ax.patch.set_facecolor('#22312b')
 
-    #this is how we create the pitch
-    pitch = Pitch(pitch_type='statsbomb', 
-                pitch_color='#22312b', 
-                line_color='#c7d5cc',
-                )
+#     #this is how we create the pitch
+#     pitch = Pitch(pitch_type='statsbomb', 
+#                 pitch_color='#22312b', 
+#                 line_color='#c7d5cc',
+#                 )
 
-    #Draw the pitch on the ax figure as well as invert the axis for this specific pitch
-    pitch.draw(ax=ax)
-    plt.gca().invert_yaxis()
+#     #Draw the pitch on the ax figure as well as invert the axis for this specific pitch
+#     pitch.draw(ax=ax)
+#     plt.gca().invert_yaxis()
 
-    #Create the heatmap
-    kde = sns.kdeplot(
-            x=df['x'],
-            y=df['y'],
-            fill = True,
-            shade_lowest=False,
-            alpha=.5,
-            n_levels=10,
-            cmap = 'magma', ax=ax
-    )
+#     #Create the heatmap
+#     kde = sns.kdeplot(
+#             x=df['x'],
+#             y=df['y'],
+#             fill = True,
+#             shade_lowest=False,
+#             alpha=.5,
+#             n_levels=10,
+#             cmap = 'magma', ax=ax
+#     )
 
-    #use a for loop to plot each pass
-    # for x in range(len(df['x'])):
-    #     if df['outcome'][x] == 'Successful':
-    #         plt.plot((df['x'][x],df['endX'][x]),(df['y'][x],df['endY'][x]),color='green')
-    #         plt.scatter(df['x'][x],df['y'][x],color='green')
-    #     if df['outcome'][x] == 'Unsuccessful':
-    #         plt.plot((df['x'][x],df['endX'][x]),(df['y'][x],df['endY'][x]),color='red')
-    #         plt.scatter(df['x'][x],df['y'][x],color='red')
+#     #use a for loop to plot each pass
+#     # for x in range(len(df['x'])):
+#     #     if df['outcome'][x] == 'Successful':
+#     #         plt.plot((df['x'][x],df['endX'][x]),(df['y'][x],df['endY'][x]),color='green')
+#     #         plt.scatter(df['x'][x],df['y'][x],color='green')
+#     #     if df['outcome'][x] == 'Unsuccessful':
+#     #         plt.plot((df['x'][x],df['endX'][x]),(df['y'][x],df['endY'][x]),color='red')
+#     #         plt.scatter(df['x'][x],df['y'][x],color='red')
             
-    plt.xlim(0,120)
-    plt.ylim(0,80)
+#     plt.xlim(0,120)
+#     plt.ylim(0,80)
 
-    plt.title('Player Heat Map From Recent Games',color='white',size=20)
+#     plt.title('Player Heat Map From Recent Games',color='white',size=20)
 
 
 

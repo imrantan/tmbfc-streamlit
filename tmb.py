@@ -4,7 +4,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from mplsoccer.pitch import Pitch
 import seaborn as sns
-from dummydata import generate_dummy_passes, generate_heatmap
+from dummydata import generate_dummy_passes
 
 # Set page configuration
 st.set_page_config(page_title="TMB FC", layout="wide", initial_sidebar_state="expanded")
@@ -220,6 +220,31 @@ def club_overview_page():
     col1.metric("Total Goals", total_goals, border=True)
     col2.metric("Total Assists", total_assists, border=True)
     col3.metric("No. of Players", num_players, border=True)
+
+    # Filter data for the selected player
+    # Calculate the total goals for each row (ignoring NaN values)
+    all_goals, all_assists = goals.copy(), assists.copy()
+    all_goals['Total Goals'] = all_goals.iloc[:, 1:-1].sum(axis=1)
+    all_assists['Total Assists'] = all_assists.iloc[:, 1:-1].sum(axis=1)
+
+    # reduce data
+    all_goals = all_goals[['Date', 'Total Goals']]
+    all_assists = all_assists[['Date', 'Total Assists']]
+
+    # Merge goals and assists data
+    all_data = pd.merge(all_goals, all_assists, on='Date', how='outer').fillna(0)
+
+    # Time series chart
+    fig = px.line(
+        all_data,
+        x='Date',
+        y=['Total Goals', 'Total Assists'],
+        title=f"Goals and Assists Over Time",
+        labels={"value": "Count", "Date": "Match Date"},
+    )
+    st.plotly_chart(fig)
+
+
 
 
 if __name__ == "__main__":
