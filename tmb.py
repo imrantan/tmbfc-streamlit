@@ -103,7 +103,10 @@ def main():
         # Add video
         with st.container(border=True):
             VIDEO_URL = "https://www.youtube.com/watch?v=-elKH4hiRz4"
-            st.video(VIDEO_URL, loop=True)
+            st.video(VIDEO_URL)
+            st.divider()
+            VIDEO_URL = "https://www.youtube.com/watch?v=SnlPQPLB1yk"
+            st.video(VIDEO_URL)
         st.markdown('***')        
         social_media()
 
@@ -215,6 +218,18 @@ def generate_player_stats(selected_player, page):
         
     st.pyplot(fig)
 
+def melt_and_rank(data):
+    """
+    To help to transform the goals and assists data and rank the players.
+    """
+    # Melting the DataFrame
+    df = pd.melt(data, id_vars=["Date"], var_name="Name", value_name="Value")
+    # Group by 'Name' and sum the 'Value' column
+    df = df.groupby("Name", as_index=False)["Value"].sum()
+    # Sort by total goals in descending order. Top 5 only.
+    df = df.sort_values(by="Value", ascending=False).head(5)
+    return df
+
 def club_overview_page():
 
     club_name = club_info['team'].iloc[0]
@@ -260,24 +275,82 @@ def club_overview_page():
     # Merge goals and assists data
     all_data = pd.merge(all_goals, all_assists, on='Date', how='outer').fillna(0)
 
-    # Time series chart
-    fig = px.line(
-        all_data,
-        x='Date',
-        y=['Total Goals', 'Total Assists'],
-        title=f"Goals and Assists Over Time",
-        labels={"value": "Count", "Date": "Match Date"},
-    )
-    st.plotly_chart(fig)
+    with st.expander(label='View goals & assists across matches', expanded=True):
+        # Time series chart
+        fig = px.line(
+            all_data,
+            x='Date',
+            y=['Total Goals', 'Total Assists'],
+            title=f"Goals and Assists Over Time",
+            labels={"value": "Count", "Date": "Match Date"},
+        )
+        st.plotly_chart(fig)
+    
+    with st.expander(label='View top player contributions', expanded=True):
+
+        top_scorers = melt_and_rank(goals)
+        top_assisters = melt_and_rank(assists)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            # Plot horizontal bar chart using Plotly
+            fig = px.bar(
+                top_scorers,
+                x="Value",  # Total goals
+                y="Name",  # Player names
+                orientation="h",  # Horizontal orientation
+                title="Top 5 Players with Goals",
+                labels={"Value": "Total Goals", "Name": "Player"},
+                # color="Value",  # Color by total goals
+                # color_continuous_scale="YlOrBr"  # Yellow to brown color scale
+            )
+            # Update layout for better visualization
+            fig.update_layout(
+                xaxis_title="Total Goals",
+                yaxis_title="Player",
+                yaxis=dict(categoryorder="total ascending"),  # Sort y-axis by total goals
+                template="plotly_dark"  # Dark theme
+            )
+
+            fig.update_traces(marker_color='#00ff80')
+
+            # Display in Streamlit
+            st.plotly_chart(fig)
+
+        with col2:
+            # Plot horizontal bar chart using Plotly
+            fig = px.bar(
+                top_assisters,
+                x="Value",  # Total goals
+                y="Name",  # Player names
+                orientation="h",  # Horizontal orientation
+                title="Top 5 Players with Assists",
+                labels={"Value": "Total Assists", "Name": "Player"},
+                # color="Value",
+                # color_continuous_scale="YlOrBr"
+            )
+            # Update layout for better visualization
+            fig.update_layout(
+                xaxis_title="Total Assists",
+                yaxis_title="Player",
+                yaxis=dict(categoryorder="total ascending"),  # Sort y-axis by total goals
+                template="plotly_dark"  # Dark theme
+            )
+
+            fig.update_traces(marker_color='#00ff80')
+
+            # Display in Streamlit
+            st.plotly_chart(fig)
 
 def social_media():
     social_media_links = [
     "https://www.youtube.com/@TMBFootballTV",
-    "https://www.instagram.com/tmbfootballtv/"
+    "https://www.instagram.com/tmbfootballtv/",
+    "https://www.tiktok.com/@tmbfootballtv?_t=8sWmr46Q86T&_r=1"
     ]
     social_media_icons = SocialMediaIcons(social_media_links)
     social_media_icons.render()
-
 
 def home_page():
     """
