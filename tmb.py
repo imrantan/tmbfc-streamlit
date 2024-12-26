@@ -1,9 +1,11 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+from st_social_media_links import SocialMediaIcons
 import matplotlib.pyplot as plt
 from mplsoccer.pitch import Pitch
 import seaborn as sns
+import random
 from dummydata import generate_dummy_passes
 
 # Set page configuration
@@ -32,7 +34,7 @@ player_info, goals, assists, club_info, df_pos_count, passes_data = load_data()
 def main():
     # Navigation bar
     st.sidebar.title("Navigation")
-    pages = ["Team Lineup", "Player Statistics", "Club Overview"]
+    pages = ["Home", "Team Lineup", "Player Statistics", "Club Overview", "Media"]
     page = st.sidebar.radio("Go to", pages)
 
     if page == "Team Lineup":
@@ -46,10 +48,22 @@ def main():
         with st.expander("Team Lineup", expanded=True, icon="⚽"):
             # create a dictionary for buttons
             button_players = dict()
+            # create a dict of quotes to use about the different positions in football
+            positions_quotes = {'FWD': ['They spend most of the game doing nothing 🙃', 
+                                        "They won't come back to defend 😿", "Glory hunters 😼"],
+                                'MID': ['Their job is to manufacture and execute goal scoring opportunities for themselves or their teammates 🤖',
+                                        "Sorry, but we don't play tiki taka 😹",
+                                        'Pressure is for tyres! 😎'],
+                                'DEF': ["They clean up everyone else’s mess and still get blamed 🤣",
+                                        "They're better than Harry Maguire 😗",
+                                        'Just park the bus 🚌'],
+                                'GK': ["He's a keeper 😉", "The hardest position in the team 💀",
+                                       "Why didn't you save that? 🙄"]}
             # Dynamically generate buttons for each player on the team.
             for pos in ['FWD','MID','DEF','GK']:
                 with st.container(border=True):
                     st.subheader(pos)
+                    st.write(f'*{random.choice(positions_quotes[pos])}*') # pick a random quote
                     if pos in df_pos_count.index:
                         filtered_players = player_info[player_info['primary_position']==pos]
                         filtered_players.reset_index(inplace=True, drop=True)
@@ -66,11 +80,10 @@ def main():
 
                 # Generate Statistics based of the player button selected
                 if button_players[player]:
-                    generate_player_stats(player)
+                    generate_player_stats(player, page)
                     
             else:
                 st.markdown("Select a player from the team lineup and view their summary.")
-
 
     if page == "Player Statistics":
         st.title("Player Statistics")
@@ -80,13 +93,25 @@ def main():
         selected_player = st.selectbox("Select a player", player_names)
 
         # Generate Statistics
-        generate_player_stats(selected_player)
+        generate_player_stats(selected_player, page)
 
     if page == "Club Overview":
         club_overview_page()
 
+    if page == "Media":
+        st.markdown("**Check out more of our videos on Youtube, Tiktok & Instagram!**")
+        # Add video
+        with st.container(border=True):
+            VIDEO_URL = "https://www.youtube.com/watch?v=-elKH4hiRz4"
+            st.video(VIDEO_URL, loop=True)
+        st.markdown('***')        
+        social_media()
 
-def generate_player_stats(selected_player):
+    if page == "Home":
+        home_page()
+
+
+def generate_player_stats(selected_player, page):
     """
     This function generates the statistics for an individual player
     """
@@ -147,13 +172,13 @@ def generate_player_stats(selected_player):
 
     player_passes = passes_data[passes_data['player']==selected_player]
     fig ,ax = plt.subplots(figsize=(13.5,8))
-    fig.set_facecolor('#22312b')
-    ax.patch.set_facecolor('#22312b')
+    fig.set_facecolor('#1C1C1C')
+    ax.patch.set_facecolor('#1C1C1C')
 
     #this is how we create the pitch
     pitch = Pitch(pitch_type='statsbomb', 
-                pitch_color='#22312b', 
-                line_color='#c7d5cc',
+                pitch_color='#4ccf4c', 
+                line_color='#eeffee',
                 )
 
     #Draw the pitch on the ax figure as well as invert the axis for this specific pitch
@@ -171,23 +196,24 @@ def generate_player_stats(selected_player):
             cmap = 'magma', ax=ax
     )
 
-    #use a for loop to plot each pass
-    # for x in range(len(df['x'])):
-    #     if df['outcome'][x] == 'Successful':
-    #         plt.plot((df['x'][x],df['endX'][x]),(df['y'][x],df['endY'][x]),color='green')
-    #         plt.scatter(df['x'][x],df['y'][x],color='green')
-    #     if df['outcome'][x] == 'Unsuccessful':
-    #         plt.plot((df['x'][x],df['endX'][x]),(df['y'][x],df['endY'][x]),color='red')
-    #         plt.scatter(df['x'][x],df['y'][x],color='red')
-            
     plt.xlim(0,120)
     plt.ylim(0,80)
+    # plt.title(f"{selected_player}'s Heat Map From Recent Games",color='white',size=20)
 
-    plt.title(f"{selected_player}'s Heat Map From Recent Games",color='white',size=20)
-
-    # heatmap = generate_heatmap(passes_data, selected_player)
+    st.markdown(f"**{selected_player}'s Heat Map From Recent Games**")
+    
+    if page == "Player Statistics":
+        st.write("*Green - Successful passes. Red - Unsuccessful passes.*")
+        # use a for loop to plot each pass
+        for x in range(len(player_passes['x'])):
+            if player_passes['outcome'][x] == 'Successful':
+                plt.plot((player_passes['x'][x],player_passes['endX'][x]),(player_passes['y'][x],player_passes['endY'][x]),color='green')
+                plt.scatter(player_passes['x'][x],player_passes['y'][x],color='green')
+            if player_passes['outcome'][x] == 'Unsuccessful':
+                plt.plot((player_passes['x'][x],player_passes['endX'][x]),(player_passes['y'][x],player_passes['endY'][x]),color='red')
+                plt.scatter(player_passes['x'][x],player_passes['y'][x],color='red')
+        
     st.pyplot(fig)
-
 
 def club_overview_page():
 
@@ -243,6 +269,54 @@ def club_overview_page():
         labels={"value": "Count", "Date": "Match Date"},
     )
     st.plotly_chart(fig)
+
+def social_media():
+    social_media_links = [
+    "https://www.youtube.com/@TMBFootballTV",
+    "https://www.instagram.com/tmbfootballtv/"
+    ]
+    social_media_icons = SocialMediaIcons(social_media_links)
+    social_media_icons.render()
+
+
+def home_page():
+    """
+    This function creates the content for the "Home" page.
+    """
+    st.title("Welcome to TMB FC")
+
+    # Team Logo and Name
+    col1, col2 = st.columns([1, 5])
+    with col1:
+        st.image("images/tmb_logo.png", width=140)  # Make sure the path is correct
+    with col2:
+        st.subheader("TMB FC: A Brief Introduction")
+
+    # Team Summary and History
+    st.markdown("""
+        TMB FC is a passionate and dedicated football club founded in 2023. 
+        We are committed to developing talented players and fostering a strong sense of community.
+
+        For example:
+        *   Founded in 2023 by twins Khalis & Danish and their group of friends who shared a love for the beautiful game.
+        *   We compete in the TMB League and are known for our attacking style of play.
+        *   Our mission is to provide a positive and supportive environment for players of all ages and abilities.
+    """)
+
+    # How to Use the App
+    st.subheader("Navigating the Site")
+    st.markdown("""
+        Use the sidebar on the left to explore different sections of the app:
+
+        *   **Team Lineup:** View the current team roster, player positions, and fun facts about each player. Click on a player's button to view their individual statistics and a heatmap of their passes.
+        *   **Player Statistics:** Explore detailed statistics for each player, including goals, assists, and performance over time. Select a player from the dropdown menu to view their information.
+        *   **Club Overview:** Get an overview of the club's performance, including games played, wins, losses, draws, total goals, assists, and the number of players. You can also see a graph of the club's goals and assists over time.
+        *   **Media:** Check out our latest videos and connect with us on our social media platforms.
+
+    """)
+
+    st.subheader("Follow Us")
+    social_media()
 
 
 if __name__ == "__main__":

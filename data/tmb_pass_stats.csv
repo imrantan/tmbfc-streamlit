@@ -1,7 +1,0 @@
-player,x,y,type,outcome,endX,endY
-Danish,10,20,Pass,Successful,30,40
-Danish,20,30,Pass,Successful,40,50
-Danish,30,40,Pass,Successful,50,60
-Danish,40,50,Pass,Successful,70,80
-Danish,50,60,Pass,Unsuccessful,80,90
-Danish,80,90,Pass,Successful,90,100
