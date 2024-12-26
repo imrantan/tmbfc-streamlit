@@ -139,6 +139,9 @@ def generate_player_stats(selected_player, page):
         kit_num = str(int(kit_num))
 
     fav_club = player_info[player_info['player_name']==selected_player]['fav_club'].iloc[0]
+    player_rating = player_info[player_info['player_name']==selected_player]['player_rating'].iloc[0]
+    player_desc = player_info[player_info['player_name']==selected_player]['description'].iloc[0]
+    comparison_to_real_players = player_info[player_info['player_name']==selected_player]['comparison_to_real_players'].iloc[0]
 
     # Display player stats
     st.header(f"Summary of {selected_player}")
@@ -158,6 +161,12 @@ def generate_player_stats(selected_player, page):
     col1.metric("Goals", total_goals, border=True)
     col2.metric("Assists", total_assists, border=True)
     col3.metric("Squad No.", kit_num, border=True)
+
+    # Add fun facts
+    with st.container(border=True):
+        st.markdown('**Player description:**')
+        st.write(player_desc)
+        st.write(f'*Comparable players: {comparison_to_real_players}*')
 
     # Time series chart
     fig = px.line(
