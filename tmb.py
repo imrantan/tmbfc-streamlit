@@ -368,11 +368,9 @@ def home_page():
     st.title("Welcome to TMB FC")
 
     # Team Logo and Name
-    col1, col2 = st.columns([1, 5])
+    col1, _ = st.columns([1, 5])
     with col1:
         st.image("images/tmb_logo.png", width=140)  # Make sure the path is correct
-    with col2:
-        st.subheader("TMB FC: A Brief Introduction")
 
     # Team Summary and History
     st.markdown("""
