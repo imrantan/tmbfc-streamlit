@@ -213,6 +213,7 @@ def generate_player_stats(selected_player, page):
     # plt.title(f"{selected_player}'s Heat Map From Recent Games",color='white',size=20)
 
     st.markdown(f"**{selected_player}'s Heat Map From Recent Games**")
+    st.markdown(f"*Caution: This is a work-in-progress!* 🚧🛠️")
     
     if page == "Player Statistics":
         st.write("*Green - Successful passes. Red - Unsuccessful passes.*")
