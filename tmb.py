@@ -7,7 +7,7 @@ import seaborn as sns
 from dummydata import generate_dummy_passes
 
 # Set page configuration
-st.set_page_config(page_title="TMB FC", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="TMB FC", layout="wide", initial_sidebar_state="collapsed")
 
 # Load data
 @st.cache_data
