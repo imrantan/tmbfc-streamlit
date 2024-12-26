@@ -12,7 +12,7 @@ from dummydata import generate_dummy_passes
 st.set_page_config(page_title="TMB FC", layout="wide", initial_sidebar_state="collapsed")
 
 # Load data
-@st.cache_data
+@st.cache_data(ttl=86400) # cached expires every 24hrs
 def load_data():
 
     # 1. Load data from excel
